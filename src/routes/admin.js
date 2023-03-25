@@ -23,6 +23,66 @@ router.post('/login', async (req, res, next) => {
   
 })
 
+
+const multer =require('multer');
+const upload =  multer({
+    // dest : 'uploads',
+    limits: {
+        fileSize: 5000000 // 5 MB
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.endsWith('.pdf')) {
+            return cb(new Error('Please upload an PDFs File Only'))
+        }
+
+        cb(undefined, true)
+    }
+})
+// router.post('/upload', upload.single('upload'), (req, res) =>{
+//     res.send("File uploaded")
+// })
+// router.post('/upload', upload.single('upload'), async (req, res) => {
+//     req.Notice.NoticeFile = req.file.buffer
+//     await req.Notice.save()
+//     res.send("File Uploaded | Sucessfully ")
+// }, (error, req, res, next) => {
+//     res.status(400).send({ error: error.message })
+// })
+router.post('/upload', upload.single('upload') ,(req, res, next) =>{
+    const querypram = req.query
+    Notice.findOneAndUpdate({RefNo:querypram.RefNo},{
+        $set:{
+            NoticeFile: req.file.buffer
+        }
+    })
+    .then(result =>{
+        console.log('Updated Successfully');
+        res.status(200).send({msg: "File added Sucessfully "});
+    })
+    .catch(err =>{
+        console.log(err);
+        res.status(500).send({msg : "Error"});
+    })
+    
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+
+router.get('/view', async (req, res) =>{
+    try{
+        const querypram = req.query
+       const output = await Notice.findOne({RefNo : querypram.RefNo})
+       if(!output){
+        throw new Error()
+       }
+         res.set('Content-Type', 'application/pdf');
+         res.send(output.NoticeFile)
+    }catch(e){
+        res.status(404).send("Not Found")
+    }
+})
+// ----------------------------------------------------------------------------------
+
 router.post('/notice',verifyAccessToken, async (req, res, next)=>{
     try {
         const notice = new  Notice({ 
@@ -49,7 +109,6 @@ router.post('/notice',verifyAccessToken, async (req, res, next)=>{
         res.send(error)
     }
 } )
-
 router.put('/notice', verifyAccessToken, (req, res, next) =>{
     const querypram = req.query
     Notice.findOneAndUpdate({RefNo:querypram.RefNo},{
@@ -75,7 +134,6 @@ router.put('/notice', verifyAccessToken, (req, res, next) =>{
     })
     
 })
-
 router.delete('/notice', verifyAccessToken, (req, res, next) =>{
     const querypram = req.query
     Notice.findOneAndDelete({RefNo:querypram.RefNo})

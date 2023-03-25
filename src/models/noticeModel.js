@@ -36,7 +36,10 @@ const NoticeModel = new mongoose.Schema({
     PostedBy : {
         type : String,
         required : true
-    }
+    }, 
+    NoticeFile: {
+      type: Buffer
+  }
   })
 
 const Notices = mongoose.model('notices', NoticeModel)
