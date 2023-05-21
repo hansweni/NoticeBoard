@@ -4,7 +4,7 @@ const Notice = require('../models/noticeModel');
 
 router.get('/', async (req, res) => {
     const querypram = req.query
-    Notice.find().sort({IssueDate: querypram.order || -1}).limit(querypram.limit || 10)
+    Notice.find().sort({IssueDate: querypram.order || -1})
     .then(result =>{
         res.status(200).json({
             Notices : result
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 router.get('/AndTags', async (req, res) => {
     const querypram = req.query
     const tagsArray = querypram.Tags.split(" ");
-    Notice.find({Tags:{$all :tagsArray}}).sort({IssueDate: querypram.order || -1}).limit(querypram.limit || 10)
+    Notice.find({Tags:{$all :tagsArray}}).sort({IssueDate: querypram.order || -1})
 
     .then(result =>{
         res.status(200).json({
@@ -33,7 +33,7 @@ router.get('/AndTags', async (req, res) => {
 router.get('/OrTags', async (req, res) => {
     const querypram = req.query
     const tagsArray = querypram.Tags.split(" ");
-    Notice.find({Tags:{$in :tagsArray}}).sort({IssueDate: querypram.order || -1}).limit(querypram.limit || 10)
+    Notice.find({Tags:{$in :tagsArray}}).sort({IssueDate: querypram.order || -1})
 
     .then(result =>{
         res.status(200).json({
@@ -47,7 +47,7 @@ router.get('/OrTags', async (req, res) => {
 })
 router.get('/Search', async (req, res) => {
     const querypram = req.query
-    Notice.find({RefNo : querypram.RefNo}).sort({IssueDate: querypram.order || -1}).limit(querypram.limit || 10)
+    Notice.find({RefNo : querypram.RefNo}).sort({IssueDate: querypram.order || -1})
 
     .then(result =>{
         res.status(200).json({

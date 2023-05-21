@@ -19,7 +19,7 @@ const NoticeModel = new mongoose.Schema({
       },
     Body : {
         type: String,
-        required :true
+        required : true
     },
     IssuerName :{
         type : String,
